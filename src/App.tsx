@@ -4,6 +4,7 @@ import {
   HomeOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  PieChartOutlined,
   ReadOutlined,
   TagOutlined,
   TeamOutlined,
@@ -34,18 +35,26 @@ const App: React.FC = () => {
             },
             {
               key: '2',
+              icon: <PieChartOutlined />,
+              label: 'Dashboard',
+              disabled: true,
+            },
+            {
+              key: '3',
               icon: <TeamOutlined />,
               label: 'Membresia',
             },
             {
-              key: '3',
+              key: '4',
               icon: <ReadOutlined />,
               label: 'Ensino',
+              disabled: true,
             },
             {
-              key: '4',
+              key: '5',
               icon: <TagOutlined />,
               label: 'Eventos',
+              disabled: true,
             },
           ]}
         />
