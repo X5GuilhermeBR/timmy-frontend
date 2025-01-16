@@ -1,15 +1,14 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './index.css'
 import {
-  HomeOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  PieChartOutlined,
-  ReadOutlined,
-  TagOutlined,
-  TeamOutlined,
 } from '@ant-design/icons'
-import { Button, Layout, Menu, theme } from 'antd'
+import { Button, Layout, theme } from 'antd'
+import Board from './components/List'
+import { fetchMembers } from './services/api'
+import Navigation from './components/Menu'
+import { ListItem } from './types'
 
 const { Header, Sider, Content } = Layout
 
@@ -18,46 +17,30 @@ const App: React.FC = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken()
+  const [list, setList] = useState<ListItem[]>([])
+  const [loading, setLoading] = useState(false)
+
+  const fetchData = async () => {
+    setLoading(true)
+    try {
+      const members = await fetchMembers()
+      setList(members.data)
+    } catch (error) {
+      console.error('Erro ao carregar dados:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div className="demo-logo-vertical" />
-        <Menu
-          theme="dark"
-          mode="inline"
-          defaultSelectedKeys={['1']}
-          items={[
-            {
-              key: '1',
-              icon: <HomeOutlined />,
-              label: 'Inicio',
-            },
-            {
-              key: '2',
-              icon: <PieChartOutlined />,
-              label: 'Dashboard',
-              disabled: true,
-            },
-            {
-              key: '3',
-              icon: <TeamOutlined />,
-              label: 'Membresia',
-            },
-            {
-              key: '4',
-              icon: <ReadOutlined />,
-              label: 'Ensino',
-              disabled: true,
-            },
-            {
-              key: '5',
-              icon: <TagOutlined />,
-              label: 'Eventos',
-              disabled: true,
-            },
-          ]}
-        />
+        <Navigation />
       </Sider>
       <Layout>
         <Header style={{ padding: 0, background: colorBgContainer }}>
@@ -81,7 +64,9 @@ const App: React.FC = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          Content
+          <Board
+            list={list}
+            loading={loading} />
         </Content>
       </Layout>
     </Layout>
