@@ -1,20 +1,10 @@
 import './index.css'
-import { List, Skeleton, Avatar } from 'antd'
-
-interface Address {
-    street: string
-    city: string
-    state: string
-    zip_code: string
-}
-
-interface User {
-    email: string
-    activated: boolean
-    avatar_url: string
-}
+import { List, Skeleton, Avatar, Badge } from 'antd'
 
 interface ListItem {
+    avatar_url: string
+    activated: string
+    phone_number: string
     id: number
     full_name: string
     date_of_birth: string
@@ -24,8 +14,6 @@ interface ListItem {
     createdAt: string
     updatedAt: string
     user_id: number
-    User: User
-    Addresses: Address[]
 }
 
 interface BoardProps {
@@ -46,15 +34,19 @@ const Board: React.FC<BoardProps> = ({ list, loading }) => {
             renderItem={(item) => (
                 <List.Item
                     actions={[
-                        <a key="list-loadmore-edit">Editar</a>,
-                        <a key="list-loadmore-more">Detalhes</a>,
+                        <Badge
+                            className="site-badge-count-109"
+                            count={item?.activated ? "Ativo" : "Desativado"}
+                            style={{ backgroundColor: `${item?.activated ? "green" : "red"}` }}
+                        />,
+                        <a key="list-loadmore-more">Editar</a>,
                     ]}
                 >
                     <Skeleton avatar title={false} loading={loading} active>
                         <List.Item.Meta
-                            avatar={<Avatar src={item.User?.avatar_url} />}
+                            avatar={<Avatar src={item.avatar_url} />}
                             title={<a href="https://ant.design">{item?.full_name}</a>}
-                            description={`${item?.Addresses[0]?.street}, ${item?.Addresses[0]?.city}, ${item?.Addresses[0]?.state} - ${item?.Addresses[0]?.zip_code}`}
+                            description={item?.phone_number}
                         />
                     </Skeleton>
                 </List.Item>
