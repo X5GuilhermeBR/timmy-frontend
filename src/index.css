@@ -2,11 +2,3 @@ html, body, #root {
   height: 100%;
   margin: 0;
 }
-
-.ant-layout {
-  height: 100%;
-}
-
-.ant-layout-content {
-  height: calc(100% - 64px); /* Ajuste conforme o tamanho do seu Header */
-}

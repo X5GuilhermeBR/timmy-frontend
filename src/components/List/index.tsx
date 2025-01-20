@@ -36,7 +36,7 @@ const Board: React.FC<BoardProps> = ({ list, loading }) => {
                     actions={[
                         <Badge
                             className="site-badge-count-109"
-                            count={item?.activated ? "Ativo" : "Desativado"}
+                            count={item?.activated ? "Ativo" : "Desligado"}
                             style={{ backgroundColor: `${item?.activated ? "green" : "red"}` }}
                         />,
                         <a key="list-loadmore-more">Editar</a>,

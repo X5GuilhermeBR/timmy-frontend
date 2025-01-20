@@ -1,40 +1,19 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import './index.css'
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from '@ant-design/icons'
 import { Button, Layout, theme } from 'antd'
-import Board from './components/List'
-import { fetchMembers } from './services/api'
-import Navigation from './components/Menu'
-import { ListItem } from './types'
+import Navigation from '../../components/Menu'
 
 const { Header, Sider, Content } = Layout
 
-const App: React.FC = () => {
+const Home: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false)
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken()
-  const [list, setList] = useState<ListItem[]>([])
-  const [loading, setLoading] = useState(false)
-
-  const fetchData = async () => {
-    setLoading(true)
-    try {
-      const members = await fetchMembers()
-      setList(members.data)
-    } catch (error) {
-      console.error('Erro ao carregar dados:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchData()
-  }, [])
 
   return (
     <Layout>
@@ -64,13 +43,11 @@ const App: React.FC = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          <Board
-            list={list}
-            loading={loading} />
+          <h1>HOME</h1>
         </Content>
       </Layout>
     </Layout>
   )
 }
 
-export default App
+export default Home
