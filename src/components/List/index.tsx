@@ -1,5 +1,6 @@
 import './index.css'
 import { List, Skeleton, Avatar, Badge } from 'antd'
+import { useNavigate } from 'react-router-dom'
 
 interface ListItem {
     avatar_url: string
@@ -22,6 +23,8 @@ interface BoardProps {
 }
 
 const Board: React.FC<BoardProps> = ({ list, loading }) => {
+    const navigate = useNavigate() // Para redirecionamento
+
     const position = 'bottom'
     const align = 'center'
 
@@ -36,10 +39,17 @@ const Board: React.FC<BoardProps> = ({ list, loading }) => {
                     actions={[
                         <Badge
                             className="site-badge-count-109"
-                            count={item?.activated ? "Ativo" : "Desligado"}
-                            style={{ backgroundColor: `${item?.activated ? "green" : "red"}` }}
+                            count={item?.activated ? 'Ativo' : 'Desligado'}
+                            style={{
+                                backgroundColor: `${item?.activated ? 'green' : 'red'}`,
+                            }}
                         />,
-                        <a key="list-loadmore-more">Editar</a>,
+                        <a
+                            key="list-loadmore-more"
+                            onClick={() => navigate(`/editar-membro/${item?.id}`)}
+                        >
+                            Editar
+                        </a>,
                     ]}
                 >
                     <Skeleton avatar title={false} loading={loading} active>
@@ -54,7 +64,5 @@ const Board: React.FC<BoardProps> = ({ list, loading }) => {
         />
     )
 }
-
-
 
 export default Board

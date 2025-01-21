@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
     HomeOutlined,
     PieChartOutlined,
@@ -9,11 +10,25 @@ import {
 import { Menu } from 'antd'
 
 const Navigation: React.FC = () => {
+    const navigate = useNavigate()
+
     return (
         <Menu
             theme="dark"
             mode="inline"
             defaultSelectedKeys={['1']}
+            onClick={(e) => {
+                switch (e.key) {
+                    case '1':
+                        navigate('/')
+                        break
+                    case '3':
+                        navigate('/membresia')
+                        break
+                    default:
+                        break
+                }
+            }}
             items={[
                 {
                     key: '1',
