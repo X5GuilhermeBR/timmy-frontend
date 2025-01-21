@@ -1,21 +1,42 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
+import { fetchMemberById } from '../../services/api'
 import './index.css'
-import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-} from '@ant-design/icons'
-import { Button, Layout, theme } from 'antd'
+import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
+import { Button, Layout, theme, Spin, message } from 'antd'
 import Navigation from '../../components/Menu'
 import Forms from '../../components/Forms'
 
 const { Header, Sider, Content } = Layout
 
 const EditMember: React.FC = () => {
-
   const [collapsed, setCollapsed] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [memberData, setMemberData] = useState(null)
+  const { id } = useParams<{ id: string }>()
+
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken()
+
+  useEffect(() => {
+    const fetchMemberData = async () => {
+      try {
+        if (id) {
+          const data = await fetchMemberById(id)
+          setMemberData(data)
+        }
+      } catch (error) {
+        console.log(error.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (id) {
+      fetchMemberData()
+    }
+  }, [id])
 
   return (
     <Layout>
@@ -45,7 +66,11 @@ const EditMember: React.FC = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          <Forms />
+          {loading ? (
+            <Spin size="large" />
+          ) : (
+            <Forms initialValues={memberData} />
+          )}
         </Content>
       </Layout>
     </Layout>

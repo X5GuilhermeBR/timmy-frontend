@@ -12,3 +12,12 @@ export const fetchMembers = async () => {
     throw new Error('Erro ao buscar membros: ' + error.message);
   }
 };
+
+export const fetchMemberById = async (id) => {
+  try {
+    const response = await api.get(`/members/${id}`);
+    return response.data;
+  } catch (error) {
+    throw new Error('Erro ao buscar membro: ' + error.message);
+  }
+};

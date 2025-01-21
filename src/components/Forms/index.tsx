@@ -7,10 +7,16 @@ import {
     Select,
     Switch,
 } from "antd"
+import { Member } from './types'
+
 
 type SizeType = Parameters<typeof Form>[0]["size"]
 
-const Forms: React.FC = () => {
+interface FormsProps {
+    initialValues: Member | null
+}
+
+const Forms: React.FC<FormsProps> = () => {
     const [componentSize, setComponentSize] = useState<SizeType | "default">(
         "default"
     )
