@@ -12,21 +12,20 @@ import { Menu } from "antd"
 const Navigation: React.FC = () => {
     const navigate = useNavigate()
     const location = useLocation()
-    const [selectedKey, setSelectedKey] = useState<string>("1")
+    const [selectedKey, setSelectedKey] = useState<string>("0")
 
     useEffect(() => {
-        switch (location.pathname) {
-            case "/":
-                setSelectedKey("1")
-                break
-            case "/membresia":
-                setSelectedKey("3")
-                break
-            default:
-                setSelectedKey("")
-                break
+        if (location.pathname === "/") {
+            setSelectedKey("1")
+        } else if (location.pathname === "/membresia") {
+            setSelectedKey("3")
+        } else if (/^\/editar-membro\/\d+$/.test(location.pathname)) {
+            setSelectedKey("3")
+        } else {
+            setSelectedKey("")
         }
     }, [location.pathname])
+
     return (
         <Menu
             theme="dark"

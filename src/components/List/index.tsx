@@ -1,10 +1,11 @@
 import './index.css'
 import { List, Skeleton, Avatar, Badge } from 'antd'
 import { useNavigate } from 'react-router-dom'
+import { WhatsAppOutlined } from '@ant-design/icons'
 
 interface ListItem {
     avatar_url: string
-    phone_number: string
+    phone_number?: string
     id: number
     full_name: string
     is_actived: boolean
@@ -16,7 +17,7 @@ interface BoardProps {
 }
 
 const Board: React.FC<BoardProps> = ({ list, loading }) => {
-    const navigate = useNavigate() // Para redirecionamento
+    const navigate = useNavigate()
 
     const position = 'bottom'
     const align = 'center'
@@ -49,7 +50,23 @@ const Board: React.FC<BoardProps> = ({ list, loading }) => {
                         <List.Item.Meta
                             avatar={<Avatar src={item.avatar_url} />}
                             title={<a href="https://ant.design">{item?.full_name}</a>}
-                            description={item?.phone_number}
+                            description={
+                                item.phone_number &&
+                                <a
+                                    href={`https://api.whatsapp.com/send?phone=${item.phone_number.replace(
+                                        /[^0-9]/g,
+                                        ''
+                                    )}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{ color: 'grey' }}
+                                >
+                                    <WhatsAppOutlined
+                                        style={{ color: 'green', marginRight: 6 }}
+                                    />
+                                    {item.phone_number}
+                                </a>
+                            }
                         />
                     </Skeleton>
                 </List.Item>
