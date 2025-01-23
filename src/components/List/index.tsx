@@ -4,17 +4,10 @@ import { useNavigate } from 'react-router-dom'
 
 interface ListItem {
     avatar_url: string
-    activated: string
     phone_number: string
     id: number
     full_name: string
-    date_of_birth: string
-    marital_status: string
-    baptism_date: string
     is_actived: boolean
-    createdAt: string
-    updatedAt: string
-    user_id: number
 }
 
 interface BoardProps {
@@ -39,9 +32,9 @@ const Board: React.FC<BoardProps> = ({ list, loading }) => {
                     actions={[
                         <Badge
                             className="site-badge-count-109"
-                            count={item?.activated ? 'Ativo' : 'Desligado'}
+                            count={item?.is_actived ? 'Ativo' : 'Desligado'}
                             style={{
-                                backgroundColor: `${item?.activated ? 'green' : 'red'}`,
+                                backgroundColor: `${item?.is_actived ? 'green' : 'red'}`,
                             }}
                         />,
                         <a

@@ -15,7 +15,7 @@ export const fetchMembers = async () => {
 
 export const fetchMemberById = async (id) => {
   try {
-    const response = await api.get(`/members/${id}`);
+    const response = await api.get(`/member/${id}`);
     return response.data;
   } catch (error) {
     throw new Error('Erro ao buscar membro: ' + error.message);

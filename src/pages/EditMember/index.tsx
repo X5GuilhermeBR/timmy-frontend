@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { fetchMemberById } from '../../services/api'
 import './index.css'
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
-import { Button, Layout, theme, Spin, message } from 'antd'
+import { Button, Layout, theme, Spin } from 'antd'
 import Navigation from '../../components/Menu'
 import Forms from '../../components/Forms'
 
