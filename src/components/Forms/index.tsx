@@ -2,17 +2,17 @@ import React, { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import "./index.css"
 import { DatePicker, Form, Input, Select, Switch, message } from "antd"
-import moment from "moment" // Certifique-se de ter instalado essa biblioteca
+import moment from "moment"
 import { fetchMemberById } from '../../services/api'
 
 type SizeType = Parameters<typeof Form>[0]["size"]
 
 const Forms: React.FC = () => {
-    const { id } = useParams<{ id: string }>() // Pega o ID da URL
+    const { id } = useParams<{ id: string }>()
     const [componentSize, setComponentSize] = useState<SizeType | "default">(
         "default"
     )
-    const [form] = Form.useForm() // Instancia o formulário do Ant Design
+    const [form] = Form.useForm()
 
     const [loading, setLoading] = useState(false)
 
@@ -24,10 +24,10 @@ const Forms: React.FC = () => {
                 nome: member.full_name,
                 estadoCivil: member.marital_status,
                 dataDeNascimento: member.date_of_birth
-                    ? moment(member.date_of_birth, "YYYY-MM-DD") // Converte a data para Moment
+                    ? moment(member.date_of_birth, "YYYY-MM-DD")
                     : null,
                 dataDeBatismo: member.baptism_date
-                    ? moment(member.baptism_date, "YYYY-MM-DD") // Converte a data para Moment
+                    ? moment(member.baptism_date, "YYYY-MM-DD")
                     : null,
                 membro: member.is_actived,
             })
