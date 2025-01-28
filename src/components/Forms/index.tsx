@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import "./index.css"
-import { DatePicker, Form, Input, Select, Switch, message } from "antd"
+import { DatePicker, Form, Input, Select, Switch, Button, message } from "antd"
 import moment from "moment"
-import { fetchMemberById } from '../../services/api'
+import { fetchMemberById, updateMember } from '../../services/api'
 
 type SizeType = Parameters<typeof Form>[0]["size"]
 
@@ -13,7 +13,6 @@ const Forms: React.FC = () => {
         "default"
     )
     const [form] = Form.useForm()
-
     const [loading, setLoading] = useState(false)
 
     const fetchData = async () => {
@@ -39,6 +38,30 @@ const Forms: React.FC = () => {
         }
     }
 
+    const onUpdate = async (values: any) => {
+        try {
+            setLoading(true)
+            const updatedData = {
+                full_name: values.nome,
+                phone_number: values.celular,
+                marital_status: values.estadoCivil,
+                date_of_birth: values.dataDeNascimento
+                    ? values.dataDeNascimento.format("YYYY-MM-DD")
+                    : null,
+                baptism_date: values.dataDeBatismo
+                    ? values.dataDeBatismo.format("YYYY-MM-DD")
+                    : null,
+            }
+
+            await updateMember(id, updatedData)
+            message.success("Membro atualizado com sucesso!")
+        } catch (error) {
+            message.error("Erro ao atualizar o membro!")
+        } finally {
+            setLoading(false)
+        }
+    }
+
     useEffect(() => {
         if (id) {
             fetchData()
@@ -57,6 +80,7 @@ const Forms: React.FC = () => {
             layout="horizontal"
             initialValues={{ size: componentSize }}
             onValuesChange={onFormLayoutChange}
+            onFinish={onUpdate}
         >
             {loading && <p>Carregando...</p>}
             <Form.Item label="Nome" name="nome">
@@ -81,6 +105,11 @@ const Forms: React.FC = () => {
             </Form.Item>
             <Form.Item label="Ativo" name="membro" valuePropName="checked">
                 <Switch />
+            </Form.Item>
+            <Form.Item wrapperCol={{ span: 14, offset: 4 }}>
+                <Button type="primary" htmlType="submit" loading={loading}>
+                    Atualizar
+                </Button>
             </Form.Item>
         </Form>
     )

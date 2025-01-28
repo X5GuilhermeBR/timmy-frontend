@@ -21,3 +21,12 @@ export const fetchMemberById = async (id) => {
     throw new Error('Erro ao buscar membro: ' + error.message);
   }
 };
+
+export const updateMember = async (id, data) => {
+  try {
+    const response = await api.put(`/member/${id}`, data);
+    return response.data;
+  } catch (error) {
+    throw new Error('Erro ao atualizar membro: ' + error.message);
+  }
+};
