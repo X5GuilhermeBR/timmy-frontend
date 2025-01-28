@@ -22,6 +22,7 @@ const Forms: React.FC = () => {
             const member = await fetchMemberById(id)
             form.setFieldsValue({
                 nome: member.full_name,
+                celular: member.phone_number,
                 estadoCivil: member.marital_status,
                 dataDeNascimento: member.date_of_birth
                     ? moment(member.date_of_birth, "YYYY-MM-DD")
@@ -59,6 +60,9 @@ const Forms: React.FC = () => {
         >
             {loading && <p>Carregando...</p>}
             <Form.Item label="Nome" name="nome">
+                <Input />
+            </Form.Item>
+            <Form.Item label="Celular" name="celular">
                 <Input />
             </Form.Item>
             <Form.Item label="Estado Civil" name="estadoCivil">
