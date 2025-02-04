@@ -3,16 +3,19 @@ import './index.css'
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  PlusOutlined,
 } from '@ant-design/icons'
 import { Button, Layout, theme } from 'antd'
 import Board from '../../components/List'
 import { fetchMembers } from '../../services/api'
 import Navigation from '../../components/Menu'
 import { ListItem } from './types'
+import { useNavigate } from 'react-router-dom'
 
 const { Header, Sider, Content } = Layout
 
 const Member: React.FC = () => {
+  const navigate = useNavigate()
   const [collapsed, setCollapsed] = useState(false)
   const {
     token: { colorBgContainer, borderRadiusLG },
@@ -43,7 +46,7 @@ const Member: React.FC = () => {
         <Navigation />
       </Sider>
       <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer }}>
+        <Header style={{ padding: '0 16px', background: colorBgContainer, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -55,18 +58,21 @@ const Member: React.FC = () => {
             }}
           />
         </Header>
+        <div style={{ padding: '16px', paddingLeft: '24px' }}>
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate(`/criar-membro`)}>
+            Criar Novo Membro
+          </Button>
+        </div>
         <Content
           style={{
-            margin: '24px 16px',
+            margin: '0px 16px',
             padding: 24,
             minHeight: 280,
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
           }}
         >
-          <Board
-            list={list}
-            loading={loading} />
+          <Board list={list} loading={loading} />
         </Content>
       </Layout>
     </Layout>

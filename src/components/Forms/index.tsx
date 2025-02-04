@@ -1,19 +1,34 @@
 import React, { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useParams, useLocation, useNavigate } from "react-router-dom"
 import "./index.css"
 import { DatePicker, Form, Input, Select, Switch, Button, message } from "antd"
 import moment from "moment"
-import { fetchMemberById, updateMember, updateMemberStatus } from "../../services/api"
+import { fetchMemberById, createMember, updateMember, updateMemberStatus } from "../../services/api"
 
 type SizeType = Parameters<typeof Form>[0]["size"]
 
 const Forms: React.FC = () => {
-    const { id } = useParams<{ id: string }>()
+    const { id } = useParams<{ id?: string }>()
+    const location = useLocation()
+    const isCreating = location.pathname.includes("criar-membro")
     const [componentSize, setComponentSize] = useState<SizeType | "default">("default")
     const [form] = Form.useForm()
     const [loading, setLoading] = useState(false)
+    const navigate = useNavigate()
 
-    const fetchData = async () => {
+    const [currentId, setCurrentId] = useState<string | undefined>(id)
+
+    useEffect(() => {
+        setCurrentId(id)
+    }, [id])
+
+    useEffect(() => {
+        if (!isCreating && currentId) {
+            fetchData(currentId)
+        }
+    }, [currentId, isCreating])
+
+    const fetchData = async (id: string) => {
         try {
             setLoading(true)
             const member = await fetchMemberById(id)
@@ -32,36 +47,51 @@ const Forms: React.FC = () => {
         }
     }
 
-    const onUpdate = async (values: any) => {
+    const onSubmit = async (values: any) => {
         try {
             setLoading(true)
 
-            const updatedData = {
+            const memberData = {
                 full_name: values.nome,
                 phone_number: values.celular,
                 marital_status: values.estadoCivil,
                 date_of_birth: values.dataDeNascimento ? values.dataDeNascimento.format("YYYY-MM-DD") : null,
                 baptism_date: values.dataDeBatismo ? values.dataDeBatismo.format("YYYY-MM-DD") : null,
+                is_actived: values.membro,
             }
 
-            const updateMemberPromise = updateMember(id, updatedData)
-            const updateStatusPromise = updateMemberStatus(id, values.membro)
+            if (isCreating) {
+                const uuid = crypto.randomUUID()
 
-            await Promise.all([updateMemberPromise, updateStatusPromise])
+                const userData = {
+                    email: `${uuid}@email.com`,
+                    password: "123",
+                    activated: true,
+                    avatar_url: "https://example.com/avatar.jpg"
+                }
 
-            message.success("Membro atualizado com sucesso!")
+                const payload = { user: userData, member: memberData }
+
+                const response = await createMember(payload)
+
+                if (response?.id) {
+                    message.success("Membro criado com sucesso!")
+                    navigate(`/editar-membro/${response.id}`, { replace: true })
+                }
+            } else {
+                await Promise.all([
+                    updateMember(currentId, memberData),
+                    updateMemberStatus(currentId, values.membro),
+                ])
+                message.success("Membro atualizado com sucesso!")
+                form.setFieldsValue(memberData)
+            }
         } catch (error) {
-            message.error("Erro ao atualizar o membro!")
+            message.error("Erro ao salvar os dados do membro!")
         } finally {
             setLoading(false)
         }
     }
-
-    useEffect(() => {
-        if (id) {
-            fetchData()
-        }
-    }, [id])
 
     const onFormLayoutChange = ({ size }: { size: SizeType }) => {
         setComponentSize(size)
@@ -73,12 +103,12 @@ const Forms: React.FC = () => {
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 14 }}
             layout="horizontal"
-            initialValues={{ size: componentSize }}
+            initialValues={{ size: componentSize, membro: true }}
             onValuesChange={onFormLayoutChange}
-            onFinish={onUpdate}
+            onFinish={onSubmit}
         >
             {loading && <p>Carregando...</p>}
-            <Form.Item label="Nome" name="nome">
+            <Form.Item label="Nome" name="nome" rules={[{ required: true, message: "Nome é obrigatório!" }]}>
                 <Input />
             </Form.Item>
             <Form.Item label="Celular" name="celular">
@@ -98,12 +128,14 @@ const Forms: React.FC = () => {
             <Form.Item label="Data do Batismo" name="dataDeBatismo">
                 <DatePicker format="YYYY-MM-DD" />
             </Form.Item>
-            <Form.Item label="Ativo" name="membro" valuePropName="checked">
-                <Switch />
-            </Form.Item>
+            {!isCreating && (
+                <Form.Item label="Ativo" name="membro" valuePropName="checked">
+                    <Switch />
+                </Form.Item>
+            )}
             <Form.Item wrapperCol={{ span: 14, offset: 4 }}>
                 <Button type="primary" htmlType="submit" loading={loading}>
-                    Atualizar
+                    {isCreating ? "Criar Membro" : "Atualizar"}
                 </Button>
             </Form.Item>
         </Form>

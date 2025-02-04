@@ -22,6 +22,15 @@ export const fetchMemberById = async (id) => {
   }
 };
 
+export const createMember = async (data) => {
+  try {
+    const response = await api.post('/member', data);
+    return response.data;
+  } catch (error) {
+    throw new Error('Erro ao criar membro: ' + error.message);
+  }
+};
+
 export const updateMember = async (id, data) => {
   try {
     const response = await api.put(`/member/${id}`, data);
@@ -39,4 +48,3 @@ export const updateMemberStatus = async (id, isActive) => {
     throw new Error('Erro ao atualizar status do membro: ' + error.message);
   }
 };
-
