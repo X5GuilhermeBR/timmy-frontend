@@ -3,15 +3,13 @@ import { useParams } from "react-router-dom"
 import "./index.css"
 import { DatePicker, Form, Input, Select, Switch, Button, message } from "antd"
 import moment from "moment"
-import { fetchMemberById, updateMember } from '../../services/api'
+import { fetchMemberById, updateMember, updateMemberStatus } from "../../services/api"
 
 type SizeType = Parameters<typeof Form>[0]["size"]
 
 const Forms: React.FC = () => {
     const { id } = useParams<{ id: string }>()
-    const [componentSize, setComponentSize] = useState<SizeType | "default">(
-        "default"
-    )
+    const [componentSize, setComponentSize] = useState<SizeType | "default">("default")
     const [form] = Form.useForm()
     const [loading, setLoading] = useState(false)
 
@@ -23,12 +21,8 @@ const Forms: React.FC = () => {
                 nome: member.full_name,
                 celular: member.phone_number,
                 estadoCivil: member.marital_status,
-                dataDeNascimento: member.date_of_birth
-                    ? moment(member.date_of_birth, "YYYY-MM-DD")
-                    : null,
-                dataDeBatismo: member.baptism_date
-                    ? moment(member.baptism_date, "YYYY-MM-DD")
-                    : null,
+                dataDeNascimento: member.date_of_birth ? moment(member.date_of_birth, "YYYY-MM-DD") : null,
+                dataDeBatismo: member.baptism_date ? moment(member.baptism_date, "YYYY-MM-DD") : null,
                 membro: member.is_actived,
             })
         } catch (error) {
@@ -41,19 +35,20 @@ const Forms: React.FC = () => {
     const onUpdate = async (values: any) => {
         try {
             setLoading(true)
+
             const updatedData = {
                 full_name: values.nome,
                 phone_number: values.celular,
                 marital_status: values.estadoCivil,
-                date_of_birth: values.dataDeNascimento
-                    ? values.dataDeNascimento.format("YYYY-MM-DD")
-                    : null,
-                baptism_date: values.dataDeBatismo
-                    ? values.dataDeBatismo.format("YYYY-MM-DD")
-                    : null,
+                date_of_birth: values.dataDeNascimento ? values.dataDeNascimento.format("YYYY-MM-DD") : null,
+                baptism_date: values.dataDeBatismo ? values.dataDeBatismo.format("YYYY-MM-DD") : null,
             }
 
-            await updateMember(id, updatedData)
+            const updateMemberPromise = updateMember(id, updatedData)
+            const updateStatusPromise = updateMemberStatus(id, values.membro)
+
+            await Promise.all([updateMemberPromise, updateStatusPromise])
+
             message.success("Membro atualizado com sucesso!")
         } catch (error) {
             message.error("Erro ao atualizar o membro!")

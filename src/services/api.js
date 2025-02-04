@@ -30,3 +30,13 @@ export const updateMember = async (id, data) => {
     throw new Error('Erro ao atualizar membro: ' + error.message);
   }
 };
+
+export const updateMemberStatus = async (id, isActive) => {
+  try {
+    const response = await api.patch(`/member/${id}`, { isActive });
+    return response.data;
+  } catch (error) {
+    throw new Error('Erro ao atualizar status do membro: ' + error.message);
+  }
+};
+

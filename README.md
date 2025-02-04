@@ -50,13 +50,13 @@ Execute a aplicação:
 | Tela de Login                       | 🚧 Em Progresso  |
 | Tela Principal                      | 🚧 Em Progresso  |
 | Tela de Criação de Novos Membros    | 🚧 Em Progresso  |
-| Tela de Edição de Membros           | 🚧 Em Progresso  |
+| Tela de Edição de Membros           | ✅ Concluído     |
 | Dashboard com Dados                 | 🚧 Em Progresso  |
 
 ## Desenvolvedor
 
 - [@x5guilhermebr](https://www.github.com/x5guilhermebr)
-
+- [@vinicius-leitao](https://www.github.com/vinicius-leitao)
 
 ## Licença
 Copyright 2025 - Timmy
