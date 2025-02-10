@@ -89,11 +89,11 @@ const Forms: React.FC = () => {
 
                     if (result?.data?.address?.id) {
                         message.success("Membro criado com sucesso!")
-                        navigate(`/editar-membro/${response.data.member.id}`, { replace: true })
-                        return;
+                    } else {
+                        message.warning("Não foi possível associar o endereço ao membro atual. Por favor, atualize-o mais tarde.")
                     }
 
-                    message.warning("Não foi possível associar o endereço ao membro atual. Por favor, atualize-o mais tarde.")
+                    navigate(`/editar-membro/${response.data.member.id}`, { replace: true });
                 }
             } else {
                 await Promise.all([
