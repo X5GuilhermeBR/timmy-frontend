@@ -48,3 +48,21 @@ export const updateMemberStatus = async (id, isActive) => {
     throw new Error('Erro ao atualizar status do membro: ' + error.message);
   }
 };
+
+export const getCepData = async (cep) => {
+    try {
+        const response = await api.get(`https://opencep.com/v1/${cep}`);
+        return response.data;
+    } catch {
+        throw new Error('Erro ao buscar cep: ' + error.message);
+    }
+}
+
+export const createAddress = async (data) => {
+  try {
+      const response = await api.post(`/address`, data);
+      return response.data;
+  } catch {
+      throw new Error('Erro ao criar endereço: ' + error.message);
+  }
+}
