@@ -3,7 +3,7 @@ import { useParams, useLocation, useNavigate } from "react-router-dom"
 import "./index.css"
 import { DatePicker, Form, Input, Select, Switch, Button, message } from "antd"
 import moment from "moment"
-import { fetchMemberById, createMember, updateMember, updateMemberStatus } from "../../services/api"
+import { fetchMemberById, createMember, updateMember, updateMemberStatus, getCepData, createAddress } from "../../services/api"
 
 type SizeType = Parameters<typeof Form>[0]["size"]
 
@@ -60,6 +60,15 @@ const Forms: React.FC = () => {
                 is_actived: values.membro,
             }
 
+            const addressData = {
+                street: values.logradouro,
+                number: values?.numero,
+                city: values.cidade,
+                state: values.estado,
+                zip_code: values.cep,
+                country: "Brasil"
+            }
+
             if (isCreating) {
                 const uuid = crypto.randomUUID()
 
@@ -74,9 +83,17 @@ const Forms: React.FC = () => {
 
                 const response = await createMember(payload)
 
-                if (response?.id) {
-                    message.success("Membro criado com sucesso!")
-                    navigate(`/editar-membro/${response.id}`, { replace: true })
+                if (response?.data?.member?.id) {
+
+                    const result = await createAddress({ ...addressData, member_id: response.data.member.id });
+
+                    if (result?.data?.address?.id) {
+                        message.success("Membro criado com sucesso!")
+                    } else {
+                        message.warning("Não foi possível associar o endereço ao membro atual. Por favor, atualize-o mais tarde.")
+                    }
+
+                    navigate(`/editar-membro/${response.data.member.id}`, { replace: true });
                 }
             } else {
                 await Promise.all([
@@ -97,6 +114,23 @@ const Forms: React.FC = () => {
         setComponentSize(size)
     }
 
+    const searchAddressInfo = async () => {
+
+        const currentCep = form.getFieldValue('cep')
+
+        if (currentCep) {
+            const cepData = await getCepData(currentCep);
+            form.setFieldsValue({
+                ...form.getFieldsValue(),
+                logradouro: cepData?.logradouro,
+                numero: cepData?.complemento,
+                cidade: cepData?.localidade,
+                estado: cepData?.uf
+            })
+        }
+
+    }
+
     return (
         <Form
             form={form}
@@ -107,6 +141,7 @@ const Forms: React.FC = () => {
             onValuesChange={onFormLayoutChange}
             onFinish={onSubmit}
         >
+
             {loading && <p>Carregando...</p>}
             <Form.Item label="Nome" name="nome" rules={[{ required: true, message: "Nome é obrigatório!" }]}>
                 <Input />
@@ -128,6 +163,22 @@ const Forms: React.FC = () => {
             <Form.Item label="Data do Batismo" name="dataDeBatismo">
                 <DatePicker format="YYYY-MM-DD" />
             </Form.Item>
+            <Form.Item label="CEP" name="cep">
+                <Input onBlur={searchAddressInfo} />
+            </Form.Item>
+            <Form.Item label="Logradouro" name="logradouro">
+                <Input />
+            </Form.Item>
+            <Form.Item label="Número" name="numero">
+                <Input />
+            </Form.Item>
+            <Form.Item label="Cidade" name="cidade">
+                <Input />
+            </Form.Item>
+            <Form.Item label="Estado" name="estado">
+                <Input />
+            </Form.Item>
+
             {!isCreating && (
                 <Form.Item label="Ativo" name="membro" valuePropName="checked">
                     <Switch />
