@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react"
 import { useParams, useLocation, useNavigate } from "react-router-dom"
 import "./index.css"
-import { DatePicker, Form, Input, Select, Switch, Button, message } from "antd"
+import { DatePicker, Form, Input, Select, Switch, Button, message, Flex, Checkbox, Col, Row } from "antd"
 import moment from "moment"
 import { fetchMemberById, createMember, updateMember, updateMemberStatus, getCepData, createAddress } from "../../services/api"
+import { useWatch } from "antd/es/form/Form"
 
 type SizeType = Parameters<typeof Form>[0]["size"]
 
@@ -53,6 +54,7 @@ const Forms: React.FC = () => {
 
             const memberData = {
                 full_name: values.nome,
+                sex: values.sexo,
                 phone_number: values.celular,
                 marital_status: values.estadoCivil,
                 date_of_birth: values.dataDeNascimento ? values.dataDeNascimento.format("YYYY-MM-DD") : null,
@@ -62,7 +64,8 @@ const Forms: React.FC = () => {
 
             const addressData = {
                 street: values.logradouro,
-                number: values?.numero,
+                number: values.numero,
+                complement: values?.complemento,
                 city: values.cidade,
                 state: values.estado,
                 zip_code: values.cep,
@@ -123,7 +126,6 @@ const Forms: React.FC = () => {
             form.setFieldsValue({
                 ...form.getFieldsValue(),
                 logradouro: cepData?.logradouro,
-                numero: cepData?.complemento,
                 cidade: cepData?.localidade,
                 estado: cepData?.uf
             })
@@ -140,42 +142,56 @@ const Forms: React.FC = () => {
             initialValues={{ size: componentSize, membro: true }}
             onValuesChange={onFormLayoutChange}
             onFinish={onSubmit}
+            requiredMark={'optional'}
         >
 
             {loading && <p>Carregando...</p>}
-            <Form.Item label="Nome" name="nome" rules={[{ required: true, message: "Nome é obrigatório!" }]}>
+            <Form.Item label="Nome completo" name="nome" rules={[{ required: true, message: "Nome completo é obrigatório." }]}>
                 <Input />
             </Form.Item>
-            <Form.Item label="Celular" name="celular">
+            <Form.Item label="Sexo" name="sexo" rules={[{ required: true, message: "Campo obrigatório." }]}>
+                <Select placeholder="Selecionar opção">
+                    <Select.Option value="male">
+                        Masculino
+                    </Select.Option>
+                    <Select.Option value="female">
+                        Feminino
+                    </Select.Option>
+                </Select>
+            </Form.Item>
+            <Form.Item label="Celular" name="celular" rules={[{ required: true, message: "Celular é obrigatório." }]}>
                 <Input />
             </Form.Item>
-            <Form.Item label="Estado Civil" name="estadoCivil">
-                <Select>
+            <Form.Item label="Estado Civil" name="estadoCivil" rules={[{ required: true, message: "Estado civil é obrigatório." }]}>
+                <Select placeholder='Selecionar opção'>
                     <Select.Option value="single">Solteiro</Select.Option>
                     <Select.Option value="married">Casado</Select.Option>
                     <Select.Option value="widowed">Viúvo</Select.Option>
                     <Select.Option value="divorced">Divorciado</Select.Option>
                 </Select>
             </Form.Item>
-            <Form.Item label="Data de Nascimento" name="dataDeNascimento">
+            <Form.Item label="Data de Nascimento" name="dataDeNascimento" rules={[{ required: true, message: "Data de nascimento é obrigatório." }]}>
                 <DatePicker format="YYYY-MM-DD" />
             </Form.Item>
             <Form.Item label="Data do Batismo" name="dataDeBatismo">
                 <DatePicker format="YYYY-MM-DD" />
             </Form.Item>
-            <Form.Item label="CEP" name="cep">
+            <Form.Item label="CEP" name="cep" rules={[{ required: true, message: "CEP é obrigatório." }]}>
                 <Input onBlur={searchAddressInfo} />
             </Form.Item>
-            <Form.Item label="Logradouro" name="logradouro">
+            <Form.Item label="Logradouro" name="logradouro" rules={[{ required: true, message: "Logradouro é obrigatório." }]}>
                 <Input />
             </Form.Item>
-            <Form.Item label="Número" name="numero">
+            <Form.Item label="Número" name="numero" rules={[{ required: true, message: "Número é obrigatório." }]}>
                 <Input />
             </Form.Item>
-            <Form.Item label="Cidade" name="cidade">
+            <Form.Item label="Complemento" name="complemento" >
                 <Input />
             </Form.Item>
-            <Form.Item label="Estado" name="estado">
+            <Form.Item label="Cidade" name="cidade" rules={[{ required: true, message: "Cidade é obrigatório." }]}>
+                <Input />
+            </Form.Item>
+            <Form.Item label="Estado" name="estado" rules={[{ required: true, message: "Estado é obrigatório." }]}>
                 <Input />
             </Form.Item>
 
