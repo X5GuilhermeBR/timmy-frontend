@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react"
 import { useParams, useLocation, useNavigate } from "react-router-dom"
 import "./index.css"
-import { DatePicker, Form, Input, Select, Switch, Button, message, Flex, Checkbox, Col, Row } from "antd"
+import { DatePicker, Form, Input, Select, Switch, Button, message } from "antd"
 import moment from "moment"
 import { fetchMemberById, createMember, updateMember, updateMemberStatus, getCepData, createAddress } from "../../services/api"
-import { useWatch } from "antd/es/form/Form"
 
 type SizeType = Parameters<typeof Form>[0]["size"]
 
