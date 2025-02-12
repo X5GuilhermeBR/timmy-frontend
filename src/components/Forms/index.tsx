@@ -3,7 +3,7 @@ import { useParams, useLocation, useNavigate } from "react-router-dom"
 import "./index.css"
 import { DatePicker, Form, Input, Select, Switch, Button, message } from "antd"
 import moment from "moment"
-import { fetchMemberById, createMember, updateMember, updateMemberStatus, getCepData, createAddress } from "../../services/api"
+import { fetchMemberById, createMember, updateMember, updateMemberStatus, getCepData, createAddress, fetchAddressByMemberId } from "../../services/api"
 
 type SizeType = Parameters<typeof Form>[0]["size"]
 
@@ -31,6 +31,7 @@ const Forms: React.FC = () => {
     const fetchData = async (id: string) => {
         try {
             setLoading(true)
+
             const member = await fetchMemberById(id)
             form.setFieldsValue({
                 nome: member.full_name,
@@ -41,6 +42,19 @@ const Forms: React.FC = () => {
                 dataDeBatismo: member.baptism_date ? moment(member.baptism_date, "YYYY-MM-DD") : null,
                 membro: member.is_actived,
             })
+
+            const address = await fetchAddressByMemberId(id)
+            if (address) {
+                form.setFieldsValue({
+                    cep: address.zip_code,
+                    logradouro: address.street,
+                    numero: address.number,
+                    complemento: address.complement,
+                    cidade: address.city,
+                    estado: address.state,
+                })
+            }
+
         } catch (error) {
             message.error("Erro ao carregar os dados do membro!")
         } finally {
