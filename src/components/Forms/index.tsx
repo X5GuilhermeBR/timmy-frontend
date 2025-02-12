@@ -34,6 +34,7 @@ const Forms: React.FC = () => {
             const member = await fetchMemberById(id)
             form.setFieldsValue({
                 nome: member.full_name,
+                sexo: member.gender,
                 celular: member.phone_number,
                 estadoCivil: member.marital_status,
                 dataDeNascimento: member.date_of_birth ? moment(member.date_of_birth, "YYYY-MM-DD") : null,
@@ -53,7 +54,7 @@ const Forms: React.FC = () => {
 
             const memberData = {
                 full_name: values.nome,
-                sex: values.sexo,
+                gender: values.sexo,
                 phone_number: values.celular,
                 marital_status: values.estadoCivil,
                 date_of_birth: values.dataDeNascimento ? values.dataDeNascimento.format("YYYY-MM-DD") : null,
