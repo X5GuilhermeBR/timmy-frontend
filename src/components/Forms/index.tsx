@@ -87,7 +87,7 @@ const Forms: React.FC = () => {
 
                 if (response?.data?.member?.id) {
 
-                    const result = await createAddress({ ...addressData, member_id: response.data.member.id });
+                    const result = await createAddress({ ...addressData, member_id: response.data.member.id })
 
                     if (result?.data?.address?.id) {
                         message.success("Membro criado com sucesso!")
@@ -95,7 +95,7 @@ const Forms: React.FC = () => {
                         message.warning("Não foi possível associar o endereço ao membro atual. Por favor, atualize-o mais tarde.")
                     }
 
-                    navigate(`/editar-membro/${response.data.member.id}`, { replace: true });
+                    navigate(`/editar-membro/${response.data.member.id}`, { replace: true })
                 }
             } else {
                 await Promise.all([
@@ -121,7 +121,7 @@ const Forms: React.FC = () => {
         const currentCep = form.getFieldValue('cep')
 
         if (currentCep) {
-            const cepData = await getCepData(currentCep);
+            const cepData = await getCepData(currentCep)
             form.setFieldsValue({
                 ...form.getFieldsValue(),
                 logradouro: cepData?.logradouro,
@@ -170,10 +170,10 @@ const Forms: React.FC = () => {
                 </Select>
             </Form.Item>
             <Form.Item label="Data de Nascimento" name="dataDeNascimento" rules={[{ required: true, message: "Data de nascimento é obrigatório." }]}>
-                <DatePicker format="YYYY-MM-DD" />
+                <DatePicker format="DD/MM/YYYY" />
             </Form.Item>
             <Form.Item label="Data do Batismo" name="dataDeBatismo">
-                <DatePicker format="YYYY-MM-DD" />
+                <DatePicker format="DD/MM/YYYY" />
             </Form.Item>
             <Form.Item label="CEP" name="cep" rules={[{ required: true, message: "CEP é obrigatório." }]}>
                 <Input onBlur={searchAddressInfo} />
