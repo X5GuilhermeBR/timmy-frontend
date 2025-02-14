@@ -3,7 +3,7 @@ import { useParams, useLocation, useNavigate } from "react-router-dom"
 import "./index.css"
 import { DatePicker, Form, Input, Select, Switch, Button, message } from "antd"
 import moment from "moment"
-import { fetchMemberById, createMember, updateMember, updateMemberStatus, getCepData, createAddress } from "../../services/api"
+import { fetchMemberById, createMember, updateMember, updateMemberStatus, getCepData, createAddress, fetchAddressByMemberId } from "../../services/api"
 
 type SizeType = Parameters<typeof Form>[0]["size"]
 
@@ -31,15 +31,30 @@ const Forms: React.FC = () => {
     const fetchData = async (id: string) => {
         try {
             setLoading(true)
+
             const member = await fetchMemberById(id)
             form.setFieldsValue({
                 nome: member.full_name,
+                sexo: member.gender,
                 celular: member.phone_number,
                 estadoCivil: member.marital_status,
                 dataDeNascimento: member.date_of_birth ? moment(member.date_of_birth, "YYYY-MM-DD") : null,
                 dataDeBatismo: member.baptism_date ? moment(member.baptism_date, "YYYY-MM-DD") : null,
                 membro: member.is_actived,
             })
+
+            const address = await fetchAddressByMemberId(id)
+            if (address) {
+                form.setFieldsValue({
+                    cep: address.zip_code,
+                    logradouro: address.street,
+                    numero: address.number,
+                    complemento: address.complement,
+                    cidade: address.city,
+                    estado: address.state,
+                })
+            }
+
         } catch (error) {
             message.error("Erro ao carregar os dados do membro!")
         } finally {
@@ -53,6 +68,7 @@ const Forms: React.FC = () => {
 
             const memberData = {
                 full_name: values.nome,
+                gender: values.sexo,
                 phone_number: values.celular,
                 marital_status: values.estadoCivil,
                 date_of_birth: values.dataDeNascimento ? values.dataDeNascimento.format("YYYY-MM-DD") : null,
@@ -62,7 +78,8 @@ const Forms: React.FC = () => {
 
             const addressData = {
                 street: values.logradouro,
-                number: values?.numero,
+                number: values.numero,
+                complement: values?.complemento,
                 city: values.cidade,
                 state: values.estado,
                 zip_code: values.cep,
@@ -85,7 +102,7 @@ const Forms: React.FC = () => {
 
                 if (response?.data?.member?.id) {
 
-                    const result = await createAddress({ ...addressData, member_id: response.data.member.id });
+                    const result = await createAddress({ ...addressData, member_id: response.data.member.id })
 
                     if (result?.data?.address?.id) {
                         message.success("Membro criado com sucesso!")
@@ -93,7 +110,7 @@ const Forms: React.FC = () => {
                         message.warning("Não foi possível associar o endereço ao membro atual. Por favor, atualize-o mais tarde.")
                     }
 
-                    navigate(`/editar-membro/${response.data.member.id}`, { replace: true });
+                    navigate(`/editar-membro/${response.data.member.id}`, { replace: true })
                 }
             } else {
                 await Promise.all([
@@ -119,11 +136,10 @@ const Forms: React.FC = () => {
         const currentCep = form.getFieldValue('cep')
 
         if (currentCep) {
-            const cepData = await getCepData(currentCep);
+            const cepData = await getCepData(currentCep)
             form.setFieldsValue({
                 ...form.getFieldsValue(),
                 logradouro: cepData?.logradouro,
-                numero: cepData?.complemento,
                 cidade: cepData?.localidade,
                 estado: cepData?.uf
             })
@@ -140,42 +156,56 @@ const Forms: React.FC = () => {
             initialValues={{ size: componentSize, membro: true }}
             onValuesChange={onFormLayoutChange}
             onFinish={onSubmit}
+            requiredMark={'optional'}
         >
 
             {loading && <p>Carregando...</p>}
-            <Form.Item label="Nome" name="nome" rules={[{ required: true, message: "Nome é obrigatório!" }]}>
+            <Form.Item label="Nome completo" name="nome" rules={[{ required: true, message: "Nome completo é obrigatório." }]}>
                 <Input />
             </Form.Item>
-            <Form.Item label="Celular" name="celular">
+            <Form.Item label="Sexo" name="sexo" rules={[{ required: true, message: "Campo obrigatório." }]}>
+                <Select placeholder="Selecionar opção">
+                    <Select.Option value="male">
+                        Masculino
+                    </Select.Option>
+                    <Select.Option value="female">
+                        Feminino
+                    </Select.Option>
+                </Select>
+            </Form.Item>
+            <Form.Item label="Celular" name="celular" rules={[{ required: true, message: "Celular é obrigatório." }]}>
                 <Input />
             </Form.Item>
-            <Form.Item label="Estado Civil" name="estadoCivil">
-                <Select>
+            <Form.Item label="Estado Civil" name="estadoCivil" rules={[{ required: true, message: "Estado civil é obrigatório." }]}>
+                <Select placeholder='Selecionar opção'>
                     <Select.Option value="single">Solteiro</Select.Option>
                     <Select.Option value="married">Casado</Select.Option>
                     <Select.Option value="widowed">Viúvo</Select.Option>
                     <Select.Option value="divorced">Divorciado</Select.Option>
                 </Select>
             </Form.Item>
-            <Form.Item label="Data de Nascimento" name="dataDeNascimento">
-                <DatePicker format="YYYY-MM-DD" />
+            <Form.Item label="Data de Nascimento" name="dataDeNascimento" rules={[{ required: true, message: "Data de nascimento é obrigatório." }]}>
+                <DatePicker format="DD/MM/YYYY" />
             </Form.Item>
             <Form.Item label="Data do Batismo" name="dataDeBatismo">
-                <DatePicker format="YYYY-MM-DD" />
+                <DatePicker format="DD/MM/YYYY" />
             </Form.Item>
-            <Form.Item label="CEP" name="cep">
+            <Form.Item label="CEP" name="cep" rules={[{ required: true, message: "CEP é obrigatório." }]}>
                 <Input onBlur={searchAddressInfo} />
             </Form.Item>
-            <Form.Item label="Logradouro" name="logradouro">
+            <Form.Item label="Logradouro" name="logradouro" rules={[{ required: true, message: "Logradouro é obrigatório." }]}>
                 <Input />
             </Form.Item>
-            <Form.Item label="Número" name="numero">
+            <Form.Item label="Número" name="numero" rules={[{ required: true, message: "Número é obrigatório." }]}>
                 <Input />
             </Form.Item>
-            <Form.Item label="Cidade" name="cidade">
+            <Form.Item label="Complemento" name="complemento" >
                 <Input />
             </Form.Item>
-            <Form.Item label="Estado" name="estado">
+            <Form.Item label="Cidade" name="cidade" rules={[{ required: true, message: "Cidade é obrigatório." }]}>
+                <Input />
+            </Form.Item>
+            <Form.Item label="Estado" name="estado" rules={[{ required: true, message: "Estado é obrigatório." }]}>
                 <Input />
             </Form.Item>
 

@@ -66,3 +66,12 @@ export const createAddress = async (data) => {
       throw new Error('Erro ao criar endereço: ' + error.message);
   }
 }
+
+export const fetchAddressByMemberId = async (memberId) => {
+  try {
+    const response = await api.get(`/address/${memberId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error('Erro ao buscar endereço do membro: ' + error.message);
+  }
+};
