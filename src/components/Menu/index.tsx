@@ -2,14 +2,17 @@ import React, { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import {
     HomeOutlined,
+    LogoutOutlined,
     PieChartOutlined,
     ReadOutlined,
     TagOutlined,
     TeamOutlined,
 } from "@ant-design/icons"
 import { Menu } from "antd"
+import { useAuth } from "../../hooks/useAuth"
 
 const Navigation: React.FC = () => {
+    const { logout } = useAuth();
     const navigate = useNavigate()
     const location = useLocation()
     const [selectedKey, setSelectedKey] = useState<string>("0")
@@ -39,6 +42,9 @@ const Navigation: React.FC = () => {
                         break
                     case "3":
                         navigate("/membresia")
+                        break
+                    case "6":
+                        logout();
                         break
                     default:
                         break
@@ -72,6 +78,11 @@ const Navigation: React.FC = () => {
                     icon: <TagOutlined />,
                     label: "Eventos",
                     disabled: true,
+                },
+                {
+                    key: "6",
+                    icon: <LogoutOutlined />,
+                    label: "Sair",
                 },
             ]}
         />
