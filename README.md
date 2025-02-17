@@ -47,9 +47,9 @@ Execute a aplicação:
 ## Funcionalidades
 | **Features**                        | **Status**       |
 |-------------------------------------|------------------|
-| Tela de Login                       | 🚧 Em Progresso  |
+| Tela de Login                       | ✅ Concluído  |
 | Tela Principal                      | 🚧 Em Progresso  |
-| Tela de Criação de Novos Membros    | 🚧 Em Progresso  |
+| Tela de Criação de Novos Membros    | ✅ Concluído  |
 | Tela de Edição de Membros           | ✅ Concluído     |
 | Dashboard com Dados                 | 🚧 Em Progresso  |
 
